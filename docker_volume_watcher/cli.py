@@ -5,7 +5,6 @@ A tool to notify Docker contianers about changes in mounts on Windows.
 import argparse
 import logging
 
-import pywintypes
 from docker_volume_watcher.container_monitor import ContainerMonitor
 
 
@@ -19,6 +18,9 @@ def main():
     )
     parser.add_argument('container_pattern', metavar='CONTAINER_PATTERN', type=str, default='*',
                         nargs='?', help='pattern of container names to be notified (default: *)')
+
+    parser.add_argument('watch_sub_dir', metavar='WATCH_SUB_DIR', type=str, default='', nargs='?')
+
     parser.add_argument('host_dir_pattern', metavar='HOST_DIR_PATTERN', type=str, default='*',
                         nargs='?', help='pattern of host directories to be monitored (default: *)')
 
@@ -29,14 +31,12 @@ def main():
     if args.verbose:
         logging.basicConfig(level=logging.INFO)
 
-    monitor = ContainerMonitor(args.container_pattern, args.host_dir_pattern)
+    monitor = ContainerMonitor(args.container_pattern, args.host_dir_pattern, args.watch_sub_dir)
     try:
         monitor.find_containers()
         monitor.monitor()
     except KeyboardInterrupt:
         logging.info('Got KeyboardInterrupt. Exiting...')
-    except pywintypes.error:
-        logging.error('Failed to contact Docker daemon. Is it running?', exc_info=True)
 
     monitor.unwatch_all()
 

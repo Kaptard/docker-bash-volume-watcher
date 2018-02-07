@@ -1,6 +1,7 @@
-Docker Windows Volume Watcher
+Docker Bash Volume Watcher
 ==============================
-This script monitors directory bindings of Docker containers on Windows hosts and notifies containers about file changes.
+This fork takes merofeev's `docker-windows-volume-watcher<https://github.com/merofeev/docker-windows-volume-watcher>`_ and makes it work with Bash for Windows (aka Ubuntu on Windows)
+The script monitors directory bindings of Docker containers on Windows hosts and notifies containers about file changes.
 
 The script aims to be workaround for the problem of file change events propagation on Windows hosts. Due to limitations of CIFS implementation in Linux kernel, file change events in mounted folders of host are not propagated to container by Docker for Windows. This problem renders watch mode of modern frameworks (e.g. Jekyll, ng-cli, etc.) development servers useless, since containers are not notified about file changes. This problem is described on `Docker Community Forums <https://forums.docker.com/t/file-system-watch-does-not-work-with-mounted-volumes/12038>`_.
 
@@ -10,7 +11,7 @@ This script can be installed with pip (both Python 2 & 3 are supported).
 
 .. code:: bat
 
-    pip install docker-windows-volume-watcher
+    pip install docker-bash-volume-watcher
 
 
 Usage
@@ -29,19 +30,19 @@ Monitor only bindings of container ``container_name``.
     docker-volume-watcher container_name
 
 
-Monitor only binding of ``container_name`` to host directory ``C:\some\directory``.
+Monitor only binding of ``container_name`` in sub directory ``/not_node_modules``.
 
 
 .. code:: bat
 
-    docker-volume-watcher container_name C:\some\directory
+    docker-volume-watcher container_name /not_node_modules
 
 
-You can also specify wildcards with ``*`` and ``?`` characters. For example: monitor only bindings of containers with names containing `myproject` to directories starting with ``C:\project\folder\``.
+You can also specify wildcards with ``*`` and ``?`` characters. For example: monitor only bindings of containers with names containing `myproject`.
 
 .. code:: bat
 
-    docker-volume-watcher *myproject* C:\project\folder\*
+    docker-volume-watcher *myproject*
 
 
 Use flag ``-v`` to enable verbose output: the script will report start/stop events of eligible containers and print all detected file changes.

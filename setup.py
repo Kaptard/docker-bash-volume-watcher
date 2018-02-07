@@ -3,20 +3,19 @@ from setuptools import setup, find_packages
 with open('README.rst') as file:
     long_description = file.read()
 
-setup(name='docker-windows-volume-watcher',
+setup(name='docker-bash-volume-watcher',
       version='1.0.7',
       packages=find_packages(),
       entry_points={
           'console_scripts': ['docker-volume-watcher=docker_volume_watcher.cli:main'],
           },
-      description='A tool to notify Docker contianers about changes in mounts on Windows.',
-      author='Mikhail Erofeev',
-      author_email='mikhail@erofeev.pw',
-      url='http://github.com/merofeev/docker-windows-volume-watcher',
+      description='A tool to notify Docker contianers about changes in mounts on Bash for Windows.',
+      author='Kilian Volb, Mikhail Erofeev',
+      author_email='kilian@nexus-stats.com',
+      url='https://github.com/Kaptard/docker-bash-volume-watcher',
       install_requires=[
         'watchdog>=0.8.3',
-        'docker>=2.2.1',
-        'pypiwin32>=219; platform_system=="Windows"'
+        'docker==2.7.0',
         ],
       license='MIT',
       long_description=long_description,

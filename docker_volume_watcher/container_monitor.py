@@ -4,7 +4,7 @@ Exports ContainerMonitor to monitor container start/stop events and spawn notifi
 
 import logging
 import os
-import re
+import string
 from datetime import datetime, timedelta
 from fnmatch import fnmatch
 
@@ -13,29 +13,11 @@ import docker
 from docker_volume_watcher.container_notifier import ContainerNotifier
 
 
-def docker_bind_to_windows_path(path):
-    """
-    Converts Hyper-V mount path to Windows path (e.g. [/host_mnt]/C/some-path -> C:/some-path).
-
-    Args:
-        path (str): Hyper-V mount path
-
-    Returns:
-        str:  Converts Hyper-V mount path to Windows path (e.g. /C/some-path -> C:/some-path).
-
-    """
-    expr = re.compile('^(?:/host_mnt)?/([a-zA-Z])/(.*)$')
-    match = re.match(expr, path)
-    if not match:
-        return None
-    return '%s:\\%s' % match.groups()
-
-
 class ContainerMonitor(object):
     """
     Monitors container start/stop events and creates notifiers for mounts matching patterns.
     """
-    def __init__(self, container_name_pattern, host_dir_pattern):
+    def __init__(self, container_name_pattern, host_dir_pattern, watch_sub_dir):
         """
         Initialize new instance of ContainerMonitor
 
@@ -46,6 +28,7 @@ class ContainerMonitor(object):
         self.client = docker.from_env()
         self.container_name_pattern = container_name_pattern
         self.host_dir_pattern = host_dir_pattern
+        self.watch_sub_dir = watch_sub_dir
         self.notifiers = {}
 
     def __handle_event(self, event):
@@ -96,7 +79,8 @@ class ContainerMonitor(object):
         for mount in mounts:
             if mount['Type'] != 'bind':
                 continue
-            host_directory = docker_bind_to_windows_path(mount['Source'])
+            host_directory = string.replace(mount['Source'], 'host_', '') + self.watch_sub_dir
+            print(host_directory)
             if not host_directory:
                 logging.warning(
                     'Bind of container %s was skipped since it has invalid source path %s',
@@ -109,7 +93,7 @@ class ContainerMonitor(object):
                     'Bind of container %s was skipped for path %s as it\'s not a directory',
                     container_name, mount['Source'])
                 continue
-            notifier = ContainerNotifier(container, host_directory, mount['Destination'])
+            notifier = ContainerNotifier(container, host_directory, mount['Destination'] + self.watch_sub_dir)
             notifiers.append(notifier)
             logging.info('Notifier %s created.', notifier)
         return notifiers
