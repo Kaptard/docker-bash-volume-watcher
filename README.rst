@@ -1,6 +1,6 @@
 Docker Bash Volume Watcher
 ==============================
-This fork takes merofeev's `docker-windows-volume-watcher<https://github.com/merofeev/docker-windows-volume-watcher>`_ and makes it work with Bash for Windows (aka Ubuntu on Windows)
+This fork takes merofeev's `docker-windows-volume-watcher <https://github.com/merofeev/docker-windows-volume-watcher>`_ and makes it work with Bash for Windows (aka Ubuntu on Windows)
 The script monitors directory bindings of Docker containers on Windows hosts and notifies containers about file changes.
 
 The script aims to be workaround for the problem of file change events propagation on Windows hosts. Due to limitations of CIFS implementation in Linux kernel, file change events in mounted folders of host are not propagated to container by Docker for Windows. This problem renders watch mode of modern frameworks (e.g. Jekyll, ng-cli, etc.) development servers useless, since containers are not notified about file changes. This problem is described on `Docker Community Forums <https://forums.docker.com/t/file-system-watch-does-not-work-with-mounted-volumes/12038>`_.
