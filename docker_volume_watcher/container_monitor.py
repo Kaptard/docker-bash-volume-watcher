@@ -80,7 +80,7 @@ class ContainerMonitor(object):
             if mount['Type'] != 'bind':
                 continue
             host_directory = string.replace(mount['Source'], 'host_', '') + self.watch_sub_dir
-            print(host_directory)
+
             if not host_directory:
                 logging.warning(
                     'Bind of container %s was skipped since it has invalid source path %s',
